@@ -42,22 +42,27 @@ int print_string(va_list types, char buffer[], int flags, int width, int precisi
 	UNUSED(size);
 
 	if (str == NULL)
+	{
 		str = "(null)";
+	}
+
 	while (str[length] != '\0')
 		length++;
+
 	if (precision >= 0 && precision < length)
 		length = precision;
-   	int padding = width - length;
-	if (padding > 0 && !(flags & F_MINUS))
+
+	if (width > length && !(flags & F_MINUS))
 	{
-		for (i = 0; i < padding; i++)
+		for (i = length; i < width; i++)
 			write(1, " ", 1);
 	}
+
 	write(1, str, length);
 
-	if (padding > 0 && (flags & F_MINUS))
+	if (width > length && (flags & F_MINUS))
 	{
-		for (i = 0; i < padding; i++)
+		for (i = length; i < width; i++)
 			write(1, " ", 1);
 	}
 
