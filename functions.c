@@ -43,29 +43,18 @@ int print_string(va_list types, char buffer[], int flags, int width, int precisi
 
 	if (str == NULL)
 		str = "(null)";
-
-	/* Calculate the length of the string */
 	while (str[length] != '\0')
 		length++;
-
-	/* Apply precision to the string */
 	if (precision >= 0 && precision < length)
 		length = precision;
-
-	/* Calculate the number of padding characters */
-	int padding = width - length;
-
-	/* Handle padding before the string */
+   	int padding = width - length;
 	if (padding > 0 && !(flags & F_MINUS))
 	{
 		for (i = 0; i < padding; i++)
 			write(1, " ", 1);
 	}
-
-	/* Print the string */
 	write(1, str, length);
 
-	/* Handle padding after the string */
 	if (padding > 0 && (flags & F_MINUS))
 	{
 		for (i = 0; i < padding; i++)
