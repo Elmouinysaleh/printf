@@ -44,6 +44,8 @@ int print_string(va_list types, char buffer[], int flags, int width, int precisi
 	if (str == NULL)
 	{
 		str = "(null)";
+		if (precision >= 6)
+			str = "      ";
 	}
 
 	while (str[length] != '\0')
