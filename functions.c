@@ -37,6 +37,7 @@ int print_string(va_list types, char buffer[], int flags, int width, int precisi
 	int length = 0, i;
 	char *str = va_arg(types, char *);
 
+	UNUSED(buffer);
 	UNUSED(flags);
 	UNUSED(size);
 
@@ -51,10 +52,13 @@ int print_string(va_list types, char buffer[], int flags, int width, int precisi
 	if (precision >= 0 && precision < length)
 		length = precision;
 
+	// Calculate the number of padding characters
+	int padding = width - length;
+
 	// Handle padding before the string
-	if (width > length && !(flags & F_MINUS))
+	if (padding > 0 && !(flags & F_MINUS))
 	{
-		for (i = length; i < width; i++)
+		for (i = 0; i < padding; i++)
 			write(1, " ", 1);
 	}
 
@@ -62,9 +66,9 @@ int print_string(va_list types, char buffer[], int flags, int width, int precisi
 	write(1, str, length);
 
 	// Handle padding after the string
-	if (width > length && (flags & F_MINUS))
+	if (padding > 0 && (flags & F_MINUS))
 	{
-		for (i = length; i < width; i++)
+		for (i = 0; i < padding; i++)
 			write(1, " ", 1);
 	}
 
