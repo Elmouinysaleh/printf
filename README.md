@@ -1,5 +1,7 @@
 # printf
-0x11. C - printf alx team project
+0x11. C - printf alx team project : Saleh Elmouiny & Tinashe Navonika
+
+
 
 #### Authorized functions and macros
 
