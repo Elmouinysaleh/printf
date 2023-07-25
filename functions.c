@@ -30,20 +30,22 @@ int print_char(va_list types, char buffer[],
  * @size: Size specifier
  * Return: Number of chars printed
  */
-
-
-int print_string(va_list types, char buffer[], int flags, int width, int precision, int size)
+int print_string(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
 	int length = 0, i;
 	char *str = va_arg(types, char *);
 
 	UNUSED(buffer);
 	UNUSED(flags);
+	UNUSED(width);
+	UNUSED(precision);
 	UNUSED(size);
-
 	if (str == NULL)
 	{
 		str = "(null)";
+		if (precision >= 6)
+			str = "      ";
 	}
 
 	while (str[length] != '\0')
@@ -52,26 +54,27 @@ int print_string(va_list types, char buffer[], int flags, int width, int precisi
 	if (precision >= 0 && precision < length)
 		length = precision;
 
-	if (width > length && !(flags & F_MINUS))
+	if (width > length)
 	{
-		for (i = length; i < width; i++)
-			write(1, " ", 1);
+		if (flags & F_MINUS)
+		{
+			write(1, &str[0], length);
+			for (i = width - length; i > 0; i--)
+				write(1, " ", 1);
+			return (width);
+		}
+		else
+		{
+			for (i = width - length; i > 0; i--)
+				write(1, " ", 1);
+			write(1, &str[0], length);
+			return (width);
+		}
 	}
 
-	write(1, str, length);
-
-	if (width > length && (flags & F_MINUS))
-	{
-		for (i = length; i < width; i++)
-			write(1, " ", 1);
-	}
-
-	return (width > length ? width : length);
+	return (write(1, str, length));
 }
-
-
-
-/************************ PRINT PERCENT SIGN *************************/
+/************************* PRINT PERCENT SIGN *************************/
 /**
  * print_percent - Prints a percent sign
  * @types: Lista of arguments
@@ -110,44 +113,6 @@ int print_int(va_list types, char buffer[],
 {
 	int i = BUFF_SIZE - 2;
 	int is_negative = 0;
-#include "main.h"
-
-/************************* PRINT CHAR *************************/
-
-/**
-* print_char - Prints a char
-* @types: List a of arguments
-* @buffer: Buffer array to handle print
-* @flags:  Calculates active flags
-* @width: Width
-* @precision: Precision specification
-* @size: Size specifier
-* Return: Number of chars printed
-*/
-int print_char(va_list types, char buffer[],
-	int flags, int width, int precision, int size)
-{
-	char c = va_arg(types, int);
-
-	return (handle_write_char(c, buffer, flags, width, precision, size));
-}
-/************************* PRINT A STRING *************************/
-/**
-* print_string - Prints a string
-* @types: List a of arguments
-* @buffer: Buffer array to handle print
-* @flags:  Calculates active flags
-* @width: get width.
-* @precision: Precision specification
-* @size: Size specifier
-* Return: Number of chars printed
-*/
-
-int print_string(va_list types, char buffer[], int flags, int width, int precision, int size)
-{
-	int length = 0, i;
-	char *str = va_arg(types, char *);
-
 	long int n = va_arg(types, long int);
 	unsigned long int num;
 
@@ -334,7 +299,6 @@ int print_hexa_upper(va_list types, char buffer[],
 	return (print_hexa(types, "0123456789ABCDEF", buffer,
 		flags, 'X', width, precision, size));
 }
-
 /************** PRINT HEXX NUM IN LOWER OR UPPER **************/
 /**
  * print_hexa - Prints a hexadecimal number in lower or upper
@@ -381,7 +345,6 @@ int print_hexa(va_list types, char map_to[], char buffer[],
 
 	return (write_unsgnd(0, i, buffer, flags, width, precision, size));
 }
-
 /****************** PRINT POINTER ******************/
 /**
  * print_pointer - Prints the value of a pointer variable
@@ -433,7 +396,6 @@ int print_pointer(va_list types, char buffer[],
 	return (write_pointer(buffer, ind, length,
 		width, flags, padd, extra_c, padd_start));
 }
-
 /************************* PRINT NON PRINTABLE *************************/
 /**
  * print_non_printable - Prints ascii codes in hexa of non printable chars
@@ -473,7 +435,6 @@ int print_non_printable(va_list types, char buffer[],
 
 	return (write(1, buffer, i + offset));
 }
-
 /************************* PRINT REVERSE *************************/
 /**
  * print_reverse - Prints reverse string.
