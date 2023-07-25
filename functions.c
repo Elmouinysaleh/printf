@@ -71,7 +71,7 @@ int print_string(va_list types, char buffer[], int flags, int width, int precisi
 
 
 
-/************************* PRINT PERCENT SIGN *************************/
+/************************ PRINT PERCENT SIGN *************************/
 /**
  * print_percent - Prints a percent sign
  * @types: Lista of arguments
